@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-    <extension-point id="org.eclipse.glsp.ide.editor" name="Eclipse GLSP editor configuration" schema="schema/com.eclipse.glsp.ide.editor.exsd"/>
-    <extension point="org.eclipse.ui.commands">
-        <category
-            id="org.eclipse.glsp"
-            name="GLSP">
-        </category>
-    </extension>
-    <extension
-          id="org.eclipse.glsp.ide.marker.problem"
-          name="GLSP Diagram Problem"
-          point="org.eclipse.core.resources.markers">
-       <super
-             type="org.eclipse.core.resources.problemmarker">
-       </super>
-    </extension>
+      <extension-point id="org.eclipse.glsp.ide.editor" name="Eclipse GLSP editor configuration" schema="schema/com.eclipse.glsp.ide.editor.exsd"/>
+      <extension point="org.eclipse.ui.commands">
+            <category id="org.eclipse.glsp" name="GLSP">
+            </category>
+      </extension>
+      <extension id="org.eclipse.glsp.ide.marker.problem" name="GLSP Diagram Problem" point="org.eclipse.core.resources.markers">
+            <super type="org.eclipse.core.resources.problemmarker">
+            </super>
+      </extension>
+      <extension id="glsp" point="org.eclipse.core.runtime.products">
+            <product application="org.eclipse.ui.ide.workbench" name="%productName">
+                  <property name="windowImages" value="eclipse16.png,eclipse32.png,eclipse48.png">
+                  </property>
+                  <property name="aboutText" value="%productBlurb">
+                  </property>
+                  <property name="aboutImage" value="eclipse_lg.png">
+                  </property>
+                  <property name="startupForegroundColor" value="ffffff">
+                  </property>
+                  <property name="startupProgressRect" value="2,290,450,10">
+                  </property>
+                  <property name="startupMessageRect" value="7,265,320,25">
+                  </property>
+                  <property name="appName" value="%productName">
+                  </property>
+                  <property name="preferenceCustomization" value="plugin_customization.ini">
+                  </property>
+            </product>
+      </extension>
 </plugin>

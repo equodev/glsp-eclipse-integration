@@ -27,3 +27,6 @@ location "https://download.eclipse.org/elk/updates/releases/0.8.1/" {
 	org.eclipse.elk.alg.layered
 }
 
+location "https://dl.equo.dev/chromium-swt-ee/marketplace/p2/" {
+	com.equo.chromium.eclipse.feature.feature.group
+}
