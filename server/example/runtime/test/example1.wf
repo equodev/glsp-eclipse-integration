@@ -11,7 +11,7 @@
     {
       "cssClasses": [
         "task",
-        "manual"
+        "automated"
       ],
       "type": "task:manual",
       "id": "task0",
@@ -225,6 +225,7 @@
         "x": 170,
         "y": 130
       },
+      "nodeType": "forkNode",
       "size": {
         "width": 10,
         "height": 50
@@ -342,7 +343,7 @@
     },
     {
       "cssClasses": [
-        "medium"
+        "decision"
       ],
       "type": "edge:weighted",
       "routingPoints": [],
@@ -386,7 +387,7 @@
     {
       "cssClasses": [
         "task",
-        "manual"
+        "automated"
       ],
       "type": "task:manual",
       "id": "a63cfd87-da7c-4846-912b-29040b776bfb",
@@ -575,7 +576,7 @@
     {
       "cssClasses": [
         "task",
-        "automated"
+        "manual"
       ],
       "type": "task:automated",
       "id": "6c26f0a4-4354-45fa-9d9f-bc2b48adee17",
@@ -747,6 +748,7 @@
         "x": 390,
         "y": 220
       },
+      "nodeType": "joinNode",
       "size": {
         "width": 92.46875,
         "height": 30
@@ -801,7 +803,7 @@
     },
     {
       "cssClasses": [
-        "medium"
+        "merge"
       ],
       "type": "edge:weighted",
       "routingPoints": [],

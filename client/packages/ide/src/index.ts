@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020-2023 EclipseSource and others.
+ * Copyright (c) 2020-2024 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -18,5 +18,6 @@ export * from './default-modules';
 export * from './features/copy-paste/copy-paste';
 export * from './features/copy-paste/copy-paste-module';
 export * from './features/delete/delete-module';
+export * from './features/delete/invoke-delete';
 export * from './features/fallback/fallback-module';
 export * from './utils/url-parameters';
