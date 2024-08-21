@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
-<!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl --><target name="2023-09 - Default" sequenceNumber="1711238084">
+<!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl -->
+<target name="2023-09 - Default" sequenceNumber="1711238084">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.jetty.websocket.javax.server" version="10.0.13"/>
@@ -21,13 +22,9 @@
       <unit id="org.eclipse.elk.alg.layered" version="0.8.1"/>
       <repository location="https://download.eclipse.org/elk/updates/releases/0.8.1/"/>
     </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="com.equo.chromium.eclipse.feature.feature.group" version="1.0.9"/>
       <repository location="https://dl.equo.dev/chromium-swt-ee/marketplace/p2/"/>
     </location>
-	  <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-		  <repository location="http://download.eclipse.org/releases/2023-09"/>
-		  <unit id="org.eclipse.emf.sdk.feature.group" version="2.35.0.v20230829-0934"/>
-	  </location>
   </locations>
 </target>
