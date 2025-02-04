@@ -1,69 +1,167 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (C) 2011, Obeo All rights reserved. This program and the accompanying 
-	materials are made available under the terms of the Eclipse Public License 
-	v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-
-	<groupId>org.eclipse.glsp.ide</groupId>
-	<artifactId>org.eclipse.glsp.ide.releng.target</artifactId>
-	<version>2.3.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-
-	<properties>
-		<tycho-version>2.7.5</tycho-version>
-		<tycho-extras-version>2.7.5</tycho-extras-version>
-		<targetPlatform.application.name>org.eclipse.cbi.targetplatform.tpd.converter</targetPlatform.application.name>
-		<targetPlatform.application.args>r2023-09.tpd</targetPlatform.application.args>
-	</properties>
+	<parent>
+		<groupId>org.eclipse.glsp.ide</groupId>
+		<artifactId>org.eclipse.glsp.ide.releng</artifactId>
+		<version>2.3.0</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<artifactId>org.eclipse.glsp.ide.repository</artifactId>
+	<packaging>eclipse-repository</packaging>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-eclipserun-plugin</artifactId>
-				<version>${tycho-extras-version}</version>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-publisher-plugin</artifactId>
+				<version>${tycho-version}</version>
 				<configuration>
-					<repositories>
-						<repository>
-							<id>2023-09</id>
-							<layout>p2</layout>
-							<url>https://download.eclipse.org/releases/2023-09</url>
-						</repository>
-						<repository>
-							<id>tpd</id>
-							<layout>p2</layout>
-							<url> https://download.eclipse.org/cbi/tpd/3.0.0-SNAPSHOT/</url>
-						</repository>
-					</repositories>
-					<appArgLine>-consoleLog -application ${targetPlatform.application.name} ${targetPlatform.application.args}</appArgLine>
-					<!-- Set dependencies to launch the application -->
-					<dependencies>
-						<dependency>
-							<artifactId>org.eclipse.cbi.targetplatform-feature</artifactId>
-							<type>eclipse-feature</type>
-						</dependency>
-						
-						<dependency>
-							<artifactId>org.eclipse.equinox.p2.sdk</artifactId>
-							<type>eclipse-feature</type>
-						</dependency>
-					</dependencies>
+					<profiles>JavaSE-17</profiles>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>eclipse-run</goal>
-						</goals>
-						<!-- The phase validate rebuild the targetplatform before to compile/test... 
-							@see https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html -->
-						<phase>validate</phase>
-					</execution>
-				</executions>
 			</plugin>
+			<!-- Skip cleaning of this module otherwise the release build is not working 
+				on the jenkins instance -->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-p2-director-plugin</artifactId>
+                <version>${tycho-version}</version>
+                <executions>
+                    <execution>
+                        <id>materialize-products</id>
+                        <goals>
+                            <goal>materialize-products</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>archive-products</id>
+                        <goals>
+                            <goal>archive-products</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+
+			<properties>
+				<p2.repository.dest>${project.basedir}/../target/repository</p2.repository.dest>
+				<local.p2.root>${user.home}</local.p2.root>
+				<remote.p2.root>genie.glsp@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/glsp</remote.p2.root>
+				<repository.path>ide/p2/</repository.path>
+				<!-- local source directory for rsync (read from this directory) -->
+				<rsync.local.dir>${local.p2.root}/${repository.path}</rsync.local.dir>
+				<!-- remote rsync host -->
+				<rsync.remote.dir>${remote.p2.root}/${repository.path}</rsync.remote.dir>
+				<!-- pass "-n" to perform a trial run with no changes made -->
+				<dryrun></dryrun>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>${maven-antrun-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>update-local-repository</id>
+								<phase>prepare-package</phase>
+								<configuration>
+									<target>
+										<ant antfile="${basedir}/rsync.ant" target="rsync-update">
+										</ant>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+
+							<execution>
+								<id>deploy-repository</id>
+								<phase>verify</phase>
+								<configuration>
+									<target>
+										<ant antfile="${basedir}/rsync.ant" target="rsync-commit">
+										</ant>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-eclipserun-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<executionEnvironment>JavaSE-11</executionEnvironment>
+							<!-- IMPORTANT: DO NOT split the arg line -->
+							<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile packaging-p2composite.ant p2.composite.add -Dsite.label="Eclipse GLSP IDE Integration Nightly Updatesite" -Dproject.build.directory=${project.build.directory} -DunqualifiedVersion=${unqualifiedVersion} -DbuildQualifier=${buildQualifier} -Dsoftware.download.area=${rsync.local.dir}</appArgLine>
+							<repositories>
+								<repository>
+									<id>2020-09</id>
+									<layout>p2</layout>
+									<url>https://download.eclipse.org/releases/2020-09</url>
+								</repository>
+							</repositories>
+							<dependencies>
+								<dependency>
+									<artifactId>org.eclipse.ant.core</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
+								<dependency>
+									<artifactId>org.apache.ant</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
+								<dependency>
+									<artifactId>org.eclipse.equinox.p2.repository.tools</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
+								<dependency>
+									<artifactId>org.eclipse.equinox.p2.core.feature</artifactId>
+									<type>eclipse-feature</type>
+								</dependency>
+								<dependency>
+									<artifactId>org.eclipse.equinox.p2.extras.feature</artifactId>
+									<type>eclipse-feature</type>
+								</dependency>
+								<dependency>
+									<artifactId>org.eclipse.equinox.ds</artifactId>
+									<type>eclipse-plugin</type>
+								</dependency>
+							</dependencies>
+						</configuration>
+						<executions>
+							<execution>
+								<id>add-p2-composite-repository</id>
+								<phase>package</phase>
+								<goals>
+									<goal>eclipse-run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
