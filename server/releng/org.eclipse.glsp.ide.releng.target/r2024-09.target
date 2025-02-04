@@ -38,5 +38,13 @@
       <unit id="org.eclipse.elk.alg.layered" version="0.9.1"/>
       <repository location="https://download.eclipse.org/elk/updates/releases/0.9.1/"/>
     </location>
+    <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+		  <repository location="https://dl.equo.dev/chromium-swt-ee/marketplace/p2/124"/>
+		  <unit id="com.equo.chromium.cef.arm.feature.feature.group" version="124.0.10"/>
+		  <unit id="com.equo.chromium.cef.feature.feature.group" version="124.0.10"/>
+		  <unit id="com.equo.chromium.eclipse.feature.feature.group" version="1.0.10"/>
+		  <unit id="com.equo.chromium.feature.feature.group" version="124.0.10"/>
+		  <unit id="com.equo.chromium.feature.source.feature.group" version="124.0.10"/>
+	  </location>
   </locations>
 </target>
